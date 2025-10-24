@@ -50,7 +50,9 @@ export async function POST(request: NextRequest) {
             },
             body: JSON.stringify({
               chat_id: process.env.CHAT_ID,
-              text: `💖 Нове бажання котика:\n\n${message}`,
+              text: message.includes("цьом")
+                ? `💋 ${message}`
+                : `💖 Нове бажання котика:\n\n${message}`,
             }),
             // Додаємо timeout та retry
             signal: AbortSignal.timeout(10000), // 10 секунд timeout
