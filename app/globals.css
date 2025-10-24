@@ -17,3 +17,137 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.background-container {
+  background-image: url("/background.png");
+  background-size: cover;
+  background-position: 70% center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .background-container {
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: 70% top;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .background-container {
+    background-size: cover;
+    background-position: 70% center;
+  }
+}
+
+@media (min-width: 1025px) {
+  .background-container {
+    background-size: cover;
+    background-position: 70% center;
+  }
+}
+
+@media (min-width: 1920px) {
+  .background-container {
+    background-size: cover;
+    background-position: 70% center;
+  }
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .background-container {
+    background-image: url("/background.png");
+  }
+}
+
+.neon-glow {
+  box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000,
+    0 0 20px #ff0000;
+}
+
+.neon-text {
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000;
+}
+
+.glass-effect {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.input-glow:focus {
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+.button-glow:hover {
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6), 0 0 25px rgba(255, 0, 0, 0.4);
+}
+
+.heart-pulse {
+  animation: heart-pulse 2s ease-in-out infinite;
+}
+
+@keyframes heart-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px #ff0000);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 15px #ff0000) drop-shadow(0 0 25px #ff0000);
+  }
+}
+
+.form-container {
+  position: relative;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .form-container {
+    margin-top: 3rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .form-container {
+    margin-top: 4rem;
+  }
+}
+
+.form-container::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff0000, #ff6666, #ff0000);
+  border-radius: 16px;
+  z-index: -1;
+  opacity: 0.3;
+  filter: blur(2px);
+}
