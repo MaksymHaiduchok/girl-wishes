@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import LoveModal from "@/components/LoveModal";
 
 export default function Home() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showCustomAlert, setShowCustomAlert] = useState(false);
-  const [showKissAlert, setShowKissAlert] = useState(false);
+  const [showLoveModal, setShowLoveModal] = useState(false);
+  const [modalType, setModalType] = useState<"wish" | "kiss">("wish");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +26,8 @@ export default function Home() {
 
       if (response.ok) {
         setMessage("");
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
+        setModalType("wish");
+        setShowLoveModal(true);
       } else {
         const errorData = await response.json();
         throw new Error(
@@ -145,8 +145,8 @@ export default function Home() {
               });
 
               if (response.ok) {
-                setShowKissAlert(true);
-                setTimeout(() => setShowKissAlert(false), 3000);
+                setModalType("kiss");
+                setShowLoveModal(true);
               }
             } catch (error) {
               console.error("Error sending kiss:", error);
@@ -159,43 +159,12 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Alert для звичайного повідомлення */}
-      {showSuccess && (
-        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-green-800 text-white px-6 py-4 rounded-xl shadow-lg border border-green-500/30 backdrop-blur-sm animate-fade-in">
-          <div className="flex items-center space-x-2">
-            <svg
-              className="w-5 h-5 text-green-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <span className="font-semibold">Повідомлення надіслано! 💖</span>
-          </div>
-        </div>
-      )}
-
-      {/* Alert для цьомчика */}
-      {showKissAlert && (
-        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-pink-600 to-red-600 text-white px-6 py-4 rounded-xl shadow-lg border border-pink-500/30 backdrop-blur-sm animate-fade-in">
-          <div className="flex items-center space-x-2">
-            <svg
-              className="w-5 h-5 text-pink-300"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-            <span className="font-semibold">Цьомчик надіслано Максиму! 💋</span>
-          </div>
-        </div>
-      )}
+      {/* Love Modal */}
+      <LoveModal
+        isOpen={showLoveModal}
+        onClose={() => setShowLoveModal(false)}
+        type={modalType}
+      />
     </div>
   );
 }
