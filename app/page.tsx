@@ -137,14 +137,11 @@ export default function Home() {
         <button
           onClick={async () => {
             try {
-              const response = await fetch("/api/sendMessage", {
+              const response = await fetch("/api/sendKiss", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                  message: "Машуля вам надіслала цьом! 💖",
-                }),
               });
 
               if (response.ok) {
@@ -152,7 +149,7 @@ export default function Home() {
                 setTimeout(() => setShowKissAlert(false), 3000);
               }
             } catch (error) {
-              console.error("Error sending message:", error);
+              console.error("Error sending kiss:", error);
             }
           }}
           className="bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-red-500/30 backdrop-blur-sm"
