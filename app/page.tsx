@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Heart } from "lucide-react";
 
 export default function Home() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showCustomAlert, setShowCustomAlert] = useState(false);
+  const [showKissAlert, setShowKissAlert] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,11 +44,19 @@ export default function Home() {
   return (
     <div className="min-h-screen background-container relative flex items-start justify-center p-4 pt-16">
       <div className="absolute inset-0 bg-black/20" />
+
+      {/* MARIA WISHLIST заголовок */}
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+        <h1 className="text-4xl md:text-6xl font-bold text-white neon-text tracking-wider text-center">
+          MARIA WISHLIST
+        </h1>
+      </div>
+
       <div className="relative z-10 glass-effect form-container rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="mb-4 flex justify-center">
             <svg
-              className="w-16 h-16 text-red-500 heart-pulse neon-glow"
+              className="w-16 h-16 text-red-500 heart-pulse"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -53,9 +64,9 @@ export default function Home() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white mb-2 neon-text">
-            Дівочі мрії
+            Бажання Машулі
           </h1>
-          <p className="text-red-200">Поділися своїми мріями зі мною</p>
+          <p className="text-red-200">Напиши Максиму свої бажання</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -119,28 +130,75 @@ export default function Home() {
             )}
           </button>
         </form>
-
-        {showSuccess && (
-          <div className="mt-4 p-3 bg-green-900/80 border border-green-500/50 text-green-300 rounded-lg text-center animate-fade-in backdrop-blur-sm">
-            <div className="flex items-center justify-center">
-              <svg
-                className="w-5 h-5 mr-2 text-green-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              Повідомлення надіслано
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Кнопка в правому нижньому куті */}
+      <div className="fixed bottom-6 right-6 z-30">
+        <button
+          onClick={async () => {
+            try {
+              const response = await fetch("/api/sendMessage", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  message: "Машуля вам надіслала цьом! 💖",
+                }),
+              });
+
+              if (response.ok) {
+                setShowKissAlert(true);
+                setTimeout(() => setShowKissAlert(false), 3000);
+              }
+            } catch (error) {
+              console.error("Error sending message:", error);
+            }
+          }}
+          className="bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-red-500/30 backdrop-blur-sm"
+        >
+          <Heart className="w-5 h-5" />
+          <span>Відправити Максиму цьомчик</span>
+        </button>
+      </div>
+
+      {/* Alert для звичайного повідомлення */}
+      {showSuccess && (
+        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-green-800 text-white px-6 py-4 rounded-xl shadow-lg border border-green-500/30 backdrop-blur-sm animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <svg
+              className="w-5 h-5 text-green-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span className="font-semibold">Повідомлення надіслано! 💖</span>
+          </div>
+        </div>
+      )}
+
+      {/* Alert для цьомчика */}
+      {showKissAlert && (
+        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-pink-600 to-red-600 text-white px-6 py-4 rounded-xl shadow-lg border border-pink-500/30 backdrop-blur-sm animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <svg
+              className="w-5 h-5 text-pink-300"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            <span className="font-semibold">Цьомчик надіслано Максиму! 💋</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

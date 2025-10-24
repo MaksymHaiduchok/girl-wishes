@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Дівочі мрії 💖",
-  description: "Поділися своїми мріями зі мною",
+  title: "Бажання Машулі",
+  description: "Напиши Максиму свої бажання",
 };
 
 export default function RootLayout({

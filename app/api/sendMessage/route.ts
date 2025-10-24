@@ -13,6 +13,8 @@ export async function POST(request: NextRequest) {
     }
 
     let dbSuccess = false;
+    let telegramSuccess = false;
+
     if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
       try {
         const { error: dbError } = await supabaseAdmin.from("messages").insert([
@@ -30,19 +32,56 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (dbSuccess) {
-      return NextResponse.json({
-        success: true,
-        saved_to_db: true,
-        message: "Message saved successfully",
-      });
+    if (process.env.BOT_TOKEN && process.env.CHAT_ID) {
+      try {
+        console.log("Sending to Telegram...");
+        console.log("BOT_TOKEN exists:", !!process.env.BOT_TOKEN);
+        console.log("CHAT_ID exists:", !!process.env.CHAT_ID);
+        console.log("CHAT_ID value:", process.env.CHAT_ID);
+
+        const telegramResponse = await fetch(
+          `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            },
+            body: JSON.stringify({
+              chat_id: process.env.CHAT_ID,
+              text: `💖 Нове бажання котика:\n\n${message}`,
+            }),
+            // Додаємо timeout та retry
+            signal: AbortSignal.timeout(10000), // 10 секунд timeout
+          }
+        );
+
+        console.log("Telegram response status:", telegramResponse.status);
+        console.log("Telegram response ok:", telegramResponse.ok);
+
+        const telegramData = await telegramResponse.json();
+        console.log("Telegram response data:", telegramData);
+
+        if (telegramResponse.ok) {
+          telegramSuccess = true;
+          console.log("✅ Telegram message sent successfully!");
+        } else {
+          console.log("❌ Telegram error:", telegramData);
+        }
+      } catch (telegramError) {
+        console.log("❌ Telegram network error:", telegramError);
+      }
     } else {
-      return NextResponse.json({
-        success: true,
-        saved_to_db: false,
-        message: "Message processed",
-      });
+      console.log("❌ Telegram not configured - missing BOT_TOKEN or CHAT_ID");
     }
+
+    return NextResponse.json({
+      success: true,
+      saved_to_db: dbSuccess,
+      sent_to_telegram: telegramSuccess,
+      message: "Message processed successfully",
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal server error" },
