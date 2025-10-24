@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Flower } from "lucide-react";
 import LoveModal from "@/components/LoveModal";
+import FlowerModal from "@/components/FlowerModal";
 
 export default function Home() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showLoveModal, setShowLoveModal] = useState(false);
   const [modalType, setModalType] = useState<"wish" | "kiss">("wish");
+  const [showFlowerModal, setShowFlowerModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,8 +134,9 @@ export default function Home() {
         </form>
       </div>
 
-      {/* Кнопка в правому нижньому куті */}
-      <div className="fixed bottom-6 right-6 z-30">
+      {/* Кнопки в правому нижньому куті */}
+      <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-3">
+        {/* Кнопка цьомчика */}
         <button
           onClick={async () => {
             try {
@@ -157,6 +160,15 @@ export default function Home() {
           <Heart className="w-5 h-5" />
           <span>Відправити Максиму цьомчик</span>
         </button>
+
+        {/* Кнопка букетика */}
+        <button
+          onClick={() => setShowFlowerModal(true)}
+          className="bg-gradient-to-r from-pink-600 to-purple-800 hover:from-pink-700 hover:to-purple-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-pink-500/30 backdrop-blur-sm"
+        >
+          <Flower className="w-5 h-5" />
+          <span>Отримати букетик</span>
+        </button>
       </div>
 
       {/* Love Modal */}
@@ -164,6 +176,12 @@ export default function Home() {
         isOpen={showLoveModal}
         onClose={() => setShowLoveModal(false)}
         type={modalType}
+      />
+
+      {/* Flower Modal */}
+      <FlowerModal
+        isOpen={showFlowerModal}
+        onClose={() => setShowFlowerModal(false)}
       />
     </div>
   );
