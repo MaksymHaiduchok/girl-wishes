@@ -49,25 +49,44 @@ export async function POST(request: NextRequest) {
         }
 
         // Add Sandik coins to user
-        const { error: coinsError } = await supabaseAdmin
+        // Спочатку перевіряємо, чи існує запис
+        const { data: existingCoins, error: fetchError } = await supabaseAdmin
           .from("sandik_coins")
-          .upsert(
-            {
+          .select("amount")
+          .eq("user_id", userId)
+          .single();
+
+        if (fetchError && fetchError.code !== "PGRST116") {
+          // Якщо запис не існує, створюємо новий
+          const { error: insertError } = await supabaseAdmin
+            .from("sandik_coins")
+            .insert({
               user_id: userId,
               amount: quest.sandik_reward,
-            },
-            {
-              onConflict: "user_id",
-              ignoreDuplicates: false,
-            }
-          );
+            });
 
-        if (coinsError) {
-          await sendTelegramMessage(
-            chatId,
-            "❌ Помилка додавання Sandik монеток"
-          );
-          return NextResponse.json({ success: true });
+          if (insertError) {
+            await sendTelegramMessage(
+              chatId,
+              "❌ Помилка створення запису Sandik монеток"
+            );
+            return NextResponse.json({ success: true });
+          }
+        } else {
+          // Якщо запис існує, оновлюємо його
+          const newAmount = existingCoins.amount + quest.sandik_reward;
+          const { error: updateError } = await supabaseAdmin
+            .from("sandik_coins")
+            .update({ amount: newAmount })
+            .eq("user_id", userId);
+
+          if (updateError) {
+            await sendTelegramMessage(
+              chatId,
+              "❌ Помилка оновлення Sandik монеток"
+            );
+            return NextResponse.json({ success: true });
+          }
         }
 
         // Send confirmation
