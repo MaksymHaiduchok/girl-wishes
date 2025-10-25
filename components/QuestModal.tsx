@@ -30,6 +30,10 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
   const [nextReset, setNextReset] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [lastUpdateCheck, setLastUpdateCheck] = useState<string>(
+    new Date().toISOString()
+  );
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -52,6 +56,42 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
       return () => clearInterval(timer);
     }
   }, [isOpen]);
+
+  // Функція для перевірки оновлень
+  const checkForUpdates = async () => {
+    try {
+      const response = await fetch(
+        `/api/quests/check-updates?lastCheck=${encodeURIComponent(
+          lastUpdateCheck
+        )}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (data.hasUpdates) {
+          console.log("🔄 Updates detected, refreshing data...");
+          setIsUpdating(true);
+          await fetchQuests();
+          await fetchSandikCoins();
+          setLastUpdateCheck(new Date().toISOString());
+          setIsUpdating(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking for updates:", error);
+    }
+  };
+
+  // Окремий useEffect для перевірки оновлень
+  useEffect(() => {
+    if (isOpen) {
+      // Перевіряємо оновлення кожні 3 секунди
+      const updateTimer = setInterval(() => {
+        checkForUpdates();
+      }, 3000);
+
+      return () => clearInterval(updateTimer);
+    }
+  }, [isOpen, lastUpdateCheck]);
 
   const fetchQuests = async () => {
     try {
@@ -239,9 +279,19 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
 
         {/* Header */}
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-white neon-text mb-4">
-            Квести для Маші
-          </h2>
+          <div className="flex items-center justify-center mb-4">
+            <h2 className="text-3xl font-bold text-white neon-text">
+              Квести для Маші
+            </h2>
+            {isUpdating && (
+              <div className="ml-3 flex items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400"></div>
+                <span className="ml-2 text-yellow-300 text-sm">
+                  Оновлення...
+                </span>
+              </div>
+            )}
+          </div>
           <div className="flex items-center justify-center space-x-4 mb-4">
             <div className="flex items-center bg-yellow-600/20 rounded-lg px-4 py-2">
               <img src="/sandik.png" alt="Sandik" className="w-5 h-5 mr-2" />
