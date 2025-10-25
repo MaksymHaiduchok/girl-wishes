@@ -56,19 +56,58 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
     }
   };
 
-  const completeQuest = async (questId: string) => {
+  const completeQuest = async (
+    questId: string,
+    questType: string,
+    questTitle: string,
+    requiresVerification: boolean
+  ) => {
     try {
-      const response = await fetch("/api/quests/complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ questId }),
-      });
+      if (requiresVerification) {
+        // Send notification to Telegram about quest attempt
+        const notifyResponse = await fetch("/api/quests/notify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            questId,
+            questTitle,
+            questType,
+          }),
+        });
 
-      if (response.ok) {
-        await fetchQuests();
-        await fetchSandikCoins();
+        if (notifyResponse.ok) {
+          // Redirect to Telegram chat
+          window.open("https://t.me/maksym_haiduchok", "_blank");
+
+          // Special message for kiss_circle quest
+          const specialMessage =
+            questType === "kiss_circle"
+              ? `Перейди в Telegram чат з Максимом та надішли поцілунок в кружечку! 💋⭕\n\nМаксим отримав повідомлення про твій квест!`
+              : `Перейди в Telegram чат з Максимом та виконай квест: "${questTitle}"\n\nМаксим отримав повідомлення про твій квест!`;
+
+          alert(specialMessage);
+        } else {
+          alert("Помилка відправки повідомлення. Спробуй ще раз.");
+        }
+      } else {
+        // For quests that don't require verification, complete directly
+        const response = await fetch("/api/quests/complete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ questId }),
+        });
+
+        if (response.ok) {
+          await fetchQuests();
+          await fetchSandikCoins();
+          alert(`✅ Квест "${questTitle}" виконано! Отримано Sandik монетки!`);
+        } else {
+          alert("Помилка виконання квесту. Спробуй ще раз.");
+        }
       }
     } catch (error) {
       console.error("Error completing quest:", error);
@@ -180,10 +219,25 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                         </div>
                       ) : (
                         <button
-                          onClick={() => completeQuest(quest.id)}
+                          onClick={() =>
+                            completeQuest(
+                              quest.id,
+                              quest.quest_type,
+                              quest.title,
+                              quest.requires_verification
+                            )
+                          }
                           className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
                         >
-                          Виконати
+                          {quest.requires_verification
+                            ? quest.quest_type === "kiss"
+                              ? "Надіслати поцілунок 💋"
+                              : quest.quest_type === "message"
+                              ? "Надіслати бажання 💖"
+                              : quest.quest_type === "kiss_circle"
+                              ? "Надіслати поцілунок в кружечку 💋⭕"
+                              : "Виконати"
+                            : "Виконати ✅"}
                         </button>
                       )}
                     </div>
