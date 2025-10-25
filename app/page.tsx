@@ -6,8 +6,10 @@ import LoveModal from "@/components/LoveModal";
 import FlowerModal from "@/components/FlowerModal";
 import QuestModal from "@/components/QuestModal";
 import ShopModal from "@/components/ShopModal";
+import { useQuest } from "@/contexts/QuestContext";
 
 export default function Home() {
+  const { triggerRefresh } = useQuest();
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showLoveModal, setShowLoveModal] = useState(false);
@@ -34,6 +36,9 @@ export default function Home() {
         setMessage("");
         setModalType("wish");
         setShowLoveModal(true);
+        setTimeout(() => {
+          triggerRefresh();
+        }, 1000);
       } else {
         const errorData = await response.json();
         throw new Error(
@@ -171,6 +176,9 @@ export default function Home() {
               if (response.ok) {
                 setModalType("kiss");
                 setShowLoveModal(true);
+                setTimeout(() => {
+                  triggerRefresh();
+                }, 1000);
               }
             } catch (error) {
               console.error("Error sending kiss:", error);

@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    questId: "1d24d65d-693d-4f86-8ff2-a0f67de58483", // Daily message quest ID
+                    questId: "daily-message-quest", // Will be updated after running SQL
                     questType: "message",
                   }),
                 }

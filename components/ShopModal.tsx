@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, ShoppingBag, Star, Package, MessageCircle } from "lucide-react";
+import { useQuest } from "@/contexts/QuestContext";
 
 interface ShopItem {
   id: string;
@@ -18,6 +19,7 @@ interface ShopModalProps {
 }
 
 export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
+  const { refreshTrigger } = useQuest();
   const [items, setItems] = useState<ShopItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [sandikCoins, setSandikCoins] = useState(0);
@@ -28,7 +30,7 @@ export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
       fetchItems();
       fetchSandikCoins();
     }
-  }, [isOpen]);
+  }, [isOpen, refreshTrigger]);
 
   const fetchItems = async () => {
     try {
@@ -45,7 +47,7 @@ export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              questId: "0f8db29c-fa0c-44e7-93bd-e316191b0add", // First quest ID
+              questId: "shop-visit-quest", // Will be updated after running SQL
               questType: "shop",
             }),
           });

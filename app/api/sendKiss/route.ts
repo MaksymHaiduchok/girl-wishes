@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    questId: "0224565d-5440-429b-9eed-21993520014a", // Kiss quest ID
+                    questId: "daily-kiss-quest", // Will be updated after running SQL
                     questType: "kiss",
                   }),
                 }
