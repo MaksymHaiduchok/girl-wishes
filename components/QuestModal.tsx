@@ -75,13 +75,17 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
 
   const fetchKissCount = async () => {
     try {
+      console.log("🔍 Fetching kiss count...");
       const response = await fetch(`/api/kisses/count`);
       if (response.ok) {
         const data = await response.json();
+        console.log("💋 Kiss count data:", data);
         setKissCount(data.count || 0);
+      } else {
+        console.error("❌ Failed to fetch kiss count:", response.status);
       }
     } catch (error) {
-      console.error("Error fetching kiss count:", error);
+      console.error("❌ Error fetching kiss count:", error);
     }
   };
 

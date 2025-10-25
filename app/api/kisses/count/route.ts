@@ -18,21 +18,27 @@ export async function GET(request: NextRequest) {
       today.getDate() + 1
     );
 
-    // Count kisses sent today (we'll track this in a separate table or use messages with a special type)
-    // For now, let's create a simple tracking system
+    console.log("🔍 Counting kisses for today:", {
+      startOfDay: startOfDay.toISOString(),
+      endOfDay: endOfDay.toISOString(),
+    });
+
+    // Count kisses sent today
     const { data: kisses, error } = await supabaseAdmin
       .from("messages")
-      .select("id, created_at")
+      .select("id, created_at, message")
       .eq("message", "💋 Машуля вам надіслала цьом! 💖") // Kiss message
       .gte("created_at", startOfDay.toISOString())
       .lt("created_at", endOfDay.toISOString())
       .order("created_at", { ascending: false });
 
     if (error) {
+      console.error("❌ Error counting kisses:", error);
       throw error;
     }
 
     const kissCount = kisses?.length || 0;
+    console.log("💋 Found kisses:", kissCount, kisses);
 
     return NextResponse.json({
       success: true,

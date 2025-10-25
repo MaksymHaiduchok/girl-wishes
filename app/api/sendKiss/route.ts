@@ -1,7 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
+    let dbSuccess = false;
+    let telegramSuccess = false;
+
+    // Save kiss to database
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+      try {
+        const { error: dbError } = await supabaseAdmin.from("messages").insert([
+          {
+            message: "💋 Машуля вам надіслала цьом! 💖",
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (!dbError) {
+          dbSuccess = true;
+        }
+      } catch (dbError) {
+        // Silent error handling
+      }
+    }
+
     if (process.env.BOT_TOKEN && process.env.CHAT_ID) {
       try {
         const telegramResponse = await fetch(
@@ -22,33 +44,40 @@ export async function POST(request: NextRequest) {
         );
 
         if (telegramResponse.ok) {
-          // Auto-complete kiss quest ONLY if kiss was actually sent
-          try {
-            const questResponse = await fetch(
-              `${
-                process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-              }/api/quests/auto-complete`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  questId: "0224565d-5440-429b-9eed-21993520014a", // Kiss quest ID
-                  questType: "kiss",
-                }),
-              }
-            );
+          telegramSuccess = true;
+          console.log("✅ Telegram kiss sent successfully!");
 
-            if (questResponse.ok) {
-              console.log("✅ Kiss quest auto-completed!");
+          // Auto-complete kiss quest ONLY if kiss was actually sent
+          if (telegramSuccess) {
+            try {
+              const questResponse = await fetch(
+                `${
+                  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+                }/api/quests/auto-complete`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    questId: "0224565d-5440-429b-9eed-21993520014a", // Kiss quest ID
+                    questType: "kiss",
+                  }),
+                }
+              );
+
+              if (questResponse.ok) {
+                console.log("✅ Kiss quest auto-completed!");
+              }
+            } catch (questError) {
+              console.error("Error auto-completing kiss quest:", questError);
             }
-          } catch (questError) {
-            console.error("Error auto-completing kiss quest:", questError);
           }
 
           return NextResponse.json({
             success: true,
+            saved_to_db: dbSuccess,
+            sent_to_telegram: telegramSuccess,
             message: "Kiss sent successfully",
           });
         } else {
@@ -58,14 +87,18 @@ export async function POST(request: NextRequest) {
           );
         }
       } catch (telegramError) {
-        return NextResponse.json({ error: "Network error" }, { status: 500 });
+        console.log("❌ Telegram network error:", telegramError);
       }
     } else {
-      return NextResponse.json(
-        { error: "Telegram not configured" },
-        { status: 500 }
-      );
+      console.log("❌ Telegram not configured - missing BOT_TOKEN or CHAT_ID");
     }
+
+    return NextResponse.json({
+      success: true,
+      saved_to_db: dbSuccess,
+      sent_to_telegram: telegramSuccess,
+      message: "Kiss processed successfully",
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal server error" },
