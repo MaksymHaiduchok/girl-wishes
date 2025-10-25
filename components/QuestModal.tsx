@@ -94,12 +94,12 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         }
       } else {
         // For quests that don't require verification, complete directly
-        const response = await fetch("/api/quests/complete", {
+        const response = await fetch("/api/quests/auto-complete", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ questId }),
+          body: JSON.stringify({ questId, questType }),
         });
 
         if (response.ok) {
@@ -107,11 +107,15 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
           await fetchSandikCoins();
           alert(`✅ Квест "${questTitle}" виконано! Отримано Sandik монетки!`);
         } else {
-          alert("Помилка виконання квесту. Спробуй ще раз.");
+          const errorData = await response.json();
+          alert(
+            `Помилка виконання квесту: ${errorData.error || "Невідома помилка"}`
+          );
         }
       }
     } catch (error) {
       console.error("Error completing quest:", error);
+      alert("Помилка підключення до сервера.");
     }
   };
 

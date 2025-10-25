@@ -36,6 +36,26 @@ export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
       if (response.ok) {
         const data = await response.json();
         setItems(data.items || []);
+
+        // Auto-complete "First quest" when shop is opened
+        try {
+          const questResponse = await fetch("/api/quests/auto-complete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              questId: "0f8db29c-fa0c-44e7-93bd-e316191b0add", // First quest ID
+              questType: "shop",
+            }),
+          });
+
+          if (questResponse.ok) {
+            console.log("✅ First quest auto-completed!");
+          }
+        } catch (questError) {
+          console.error("Error auto-completing first quest:", questError);
+        }
       }
     } catch (error) {
       console.error("Error fetching shop items:", error);

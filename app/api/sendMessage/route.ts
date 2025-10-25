@@ -66,6 +66,34 @@ export async function POST(request: NextRequest) {
         if (telegramResponse.ok) {
           telegramSuccess = true;
           console.log("✅ Telegram message sent successfully!");
+
+          // Auto-complete daily message quest
+          try {
+            const questResponse = await fetch(
+              `${
+                process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+              }/api/quests/auto-complete`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  questId: "1d24d65d-693d-4f86-8ff2-a0f67de58483", // Daily message quest ID
+                  questType: "message",
+                }),
+              }
+            );
+
+            if (questResponse.ok) {
+              console.log("✅ Daily message quest auto-completed!");
+            }
+          } catch (questError) {
+            console.error(
+              "Error auto-completing daily message quest:",
+              questError
+            );
+          }
         } else {
           console.log("❌ Telegram error:", telegramData);
         }

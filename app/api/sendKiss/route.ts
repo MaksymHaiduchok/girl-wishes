@@ -22,6 +22,31 @@ export async function POST(request: NextRequest) {
         );
 
         if (telegramResponse.ok) {
+          // Auto-complete kiss quest
+          try {
+            const questResponse = await fetch(
+              `${
+                process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+              }/api/quests/auto-complete`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  questId: "0224565d-5440-429b-9eed-21993520014a", // Kiss quest ID
+                  questType: "kiss",
+                }),
+              }
+            );
+
+            if (questResponse.ok) {
+              console.log("✅ Kiss quest auto-completed!");
+            }
+          } catch (questError) {
+            console.error("Error auto-completing kiss quest:", questError);
+          }
+
           return NextResponse.json({
             success: true,
             message: "Kiss sent successfully",
