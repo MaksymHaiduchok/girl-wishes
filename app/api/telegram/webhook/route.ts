@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
             quest_id: questId,
             is_completed: true,
             completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           });
 
         if (completeError) {
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
             .insert({
               user_id: userId,
               amount: quest.sandik_reward,
+              updated_at: new Date().toISOString(),
             });
 
           if (insertError) {
@@ -77,7 +79,10 @@ export async function POST(request: NextRequest) {
           const newAmount = (existingCoins?.amount || 0) + quest.sandik_reward;
           const { error: updateError } = await supabaseAdmin
             .from("sandik_coins")
-            .update({ amount: newAmount })
+            .update({
+              amount: newAmount,
+              updated_at: new Date().toISOString(),
+            })
             .eq("user_id", userId);
 
           if (updateError) {

@@ -81,17 +81,17 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
     }
   };
 
-  // Окремий useEffect для перевірки оновлень (тимчасово відключено)
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     // Перевіряємо оновлення кожні 3 секунди
-  //     const updateTimer = setInterval(() => {
-  //       checkForUpdates();
-  //     }, 3000);
+  // Окремий useEffect для перевірки оновлень
+  useEffect(() => {
+    if (isOpen) {
+      // Перевіряємо оновлення кожні 3 секунди
+      const updateTimer = setInterval(() => {
+        checkForUpdates();
+      }, 3000);
 
-  //     return () => clearInterval(updateTimer);
-  //   }
-  // }, [isOpen, lastUpdateCheck]);
+      return () => clearInterval(updateTimer);
+    }
+  }, [isOpen, lastUpdateCheck]);
 
   const fetchQuests = async () => {
     try {
