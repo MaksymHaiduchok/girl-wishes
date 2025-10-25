@@ -81,17 +81,17 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
     }
   };
 
-  // Окремий useEffect для перевірки оновлень
-  useEffect(() => {
-    if (isOpen) {
-      // Перевіряємо оновлення кожні 3 секунди
-      const updateTimer = setInterval(() => {
-        checkForUpdates();
-      }, 3000);
+  // Окремий useEffect для перевірки оновлень (тимчасово відключено)
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     // Перевіряємо оновлення кожні 3 секунди
+  //     const updateTimer = setInterval(() => {
+  //       checkForUpdates();
+  //     }, 3000);
 
-      return () => clearInterval(updateTimer);
-    }
-  }, [isOpen, lastUpdateCheck]);
+  //     return () => clearInterval(updateTimer);
+  //   }
+  // }, [isOpen, lastUpdateCheck]);
 
   const fetchQuests = async () => {
     try {
@@ -172,27 +172,27 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         if (data.nextReset) {
           setNextReset(data.nextReset);
         } else {
-          // Використовуємо UTC час для консистентності
+          // Розраховуємо наступну північ в локальній часовій зоні
           const now = new Date();
           const nextMidnight = new Date(now);
-          nextMidnight.setUTCDate(nextMidnight.getUTCDate() + 1);
-          nextMidnight.setUTCHours(0, 0, 0, 0);
+          nextMidnight.setDate(nextMidnight.getDate() + 1);
+          nextMidnight.setHours(0, 0, 0, 0);
           setNextReset(nextMidnight.toISOString());
         }
       } else {
-        // Використовуємо UTC час для консистентності
+        // Розраховуємо наступну північ в локальній часовій зоні
         const now = new Date();
         const nextMidnight = new Date(now);
-        nextMidnight.setUTCDate(nextMidnight.getUTCDate() + 1);
-        nextMidnight.setUTCHours(0, 0, 0, 0);
+        nextMidnight.setDate(nextMidnight.getDate() + 1);
+        nextMidnight.setHours(0, 0, 0, 0);
         setNextReset(nextMidnight.toISOString());
       }
     } catch (error) {
-      // Використовуємо UTC час для консистентності
+      // Розраховуємо наступну північ в локальній часовій зоні
       const now = new Date();
       const nextMidnight = new Date(now);
-      nextMidnight.setUTCDate(nextMidnight.getUTCDate() + 1);
-      nextMidnight.setUTCHours(0, 0, 0, 0);
+      nextMidnight.setDate(nextMidnight.getDate() + 1);
+      nextMidnight.setHours(0, 0, 0, 0);
       setNextReset(nextMidnight.toISOString());
     }
   };
@@ -332,9 +332,6 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                       .padStart(2, "0")}`;
                   })()}
                 </span>
-                <div className="text-blue-200 text-xs mt-1">
-                  (о 00:00 за твоїм часом)
-                </div>
               </div>
             </div>
           )}
