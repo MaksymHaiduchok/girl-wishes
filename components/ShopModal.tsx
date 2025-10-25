@@ -96,7 +96,12 @@ export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
         );
       } else {
         const error = await response.json();
-        alert(`Помилка: ${error.message || "Не вдалося купити товар"}`);
+        console.error("Purchase error:", error);
+        alert(
+          `Помилка: ${
+            error.message || error.error || "Не вдалося купити товар"
+          }`
+        );
       }
     } catch (error) {
       console.error("Error purchasing item:", error);

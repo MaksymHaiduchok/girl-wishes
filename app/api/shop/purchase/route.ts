@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (itemError || !item) {
+      console.log(`❌ Item not found: ${itemId}`, itemError);
       return NextResponse.json(
         { error: "Item not found or not available" },
         { status: 404 }
@@ -38,14 +39,22 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (sandikError && sandikError.code !== "PGRST116") {
+      console.log(`❌ Error fetching sandik coins:`, sandikError);
       throw sandikError;
     }
 
     const currentAmount = sandikData?.amount || 0;
 
+    console.log(`💰 Purchase attempt: ${item.name} (${item.price} Sandik)`);
+    console.log(`💰 User has: ${currentAmount} Sandik coins`);
+
     if (currentAmount < item.price) {
+      console.log(`❌ Insufficient coins: ${currentAmount} < ${item.price}`);
       return NextResponse.json(
-        { error: "Insufficient Sandik coins" },
+        {
+          error: "Insufficient Sandik coins",
+          message: `У тебе ${currentAmount} Sandik монеток, а потрібно ${item.price}. Виконай квести щоб отримати більше!`,
+        },
         { status: 400 }
       );
     }
@@ -54,14 +63,15 @@ export async function POST(request: NextRequest) {
     const newAmount = currentAmount - item.price;
     const { error: updateError } = await supabaseAdmin
       .from("sandik_coins")
-      .upsert({
-        user_id: userId,
-        amount: newAmount,
-      });
+      .update({ amount: newAmount })
+      .eq("user_id", userId);
 
     if (updateError) {
+      console.log(`❌ Error updating sandik coins:`, updateError);
       throw updateError;
     }
+
+    console.log(`✅ Sandik coins updated: ${currentAmount} -> ${newAmount}`);
 
     // Record purchase
     const { error: purchaseError } = await supabaseAdmin
@@ -74,13 +84,19 @@ export async function POST(request: NextRequest) {
       });
 
     if (purchaseError) {
+      console.log(`❌ Error recording purchase:`, purchaseError);
       throw purchaseError;
     }
+
+    console.log(`✅ Purchase recorded for item: ${item.name}`);
 
     // Send notification to Telegram if configured
     if (process.env.BOT_TOKEN && process.env.CHAT_ID) {
       try {
-        await fetch(
+        console.log(
+          `📱 Sending Telegram notification for purchase: ${item.name}`
+        );
+        const telegramResponse = await fetch(
           `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
           {
             method: "POST",
@@ -96,9 +112,20 @@ export async function POST(request: NextRequest) {
             signal: AbortSignal.timeout(10000),
           }
         );
+
+        if (telegramResponse.ok) {
+          console.log(`✅ Telegram notification sent successfully`);
+        } else {
+          console.log(
+            `❌ Telegram notification failed:`,
+            await telegramResponse.text()
+          );
+        }
       } catch (telegramError) {
-        console.error("Error sending Telegram notification:", telegramError);
+        console.error("❌ Error sending Telegram notification:", telegramError);
       }
+    } else {
+      console.log(`⚠️ Telegram not configured - missing BOT_TOKEN or CHAT_ID`);
     }
 
     return NextResponse.json({
