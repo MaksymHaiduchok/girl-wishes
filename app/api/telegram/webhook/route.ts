@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
           }
         } else {
           // Якщо запис існує, оновлюємо його
-          const newAmount = existingCoins.amount + quest.sandik_reward;
+          const newAmount = (existingCoins?.amount || 0) + quest.sandik_reward;
           const { error: updateError } = await supabaseAdmin
             .from("sandik_coins")
             .update({ amount: newAmount })
