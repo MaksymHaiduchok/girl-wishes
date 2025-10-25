@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         );
 
         if (telegramResponse.ok) {
-          // Auto-complete kiss quest
+          // Auto-complete kiss quest ONLY if kiss was actually sent
           try {
             const questResponse = await fetch(
               `${

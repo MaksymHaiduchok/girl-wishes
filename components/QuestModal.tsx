@@ -23,11 +23,15 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [loading, setLoading] = useState(true);
   const [sandikCoins, setSandikCoins] = useState(0);
+  const [messageCount, setMessageCount] = useState(0);
+  const [kissCount, setKissCount] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       fetchQuests();
       fetchSandikCoins();
+      fetchMessageCount();
+      fetchKissCount();
     }
   }, [isOpen]);
 
@@ -54,6 +58,30 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
       }
     } catch (error) {
       console.error("Error fetching sandik coins:", error);
+    }
+  };
+
+  const fetchMessageCount = async () => {
+    try {
+      const response = await fetch(`/api/messages/count`);
+      if (response.ok) {
+        const data = await response.json();
+        setMessageCount(data.count || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching message count:", error);
+    }
+  };
+
+  const fetchKissCount = async () => {
+    try {
+      const response = await fetch(`/api/kisses/count`);
+      if (response.ok) {
+        const data = await response.json();
+        setKissCount(data.count || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching kiss count:", error);
     }
   };
 
@@ -189,6 +217,58 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                       <p className="text-yellow-200 text-sm mb-3">
                         {quest.description}
                       </p>
+
+                      {/* Progress for serial quests */}
+                      {quest.title === "Серійне бажання" &&
+                        !quest.is_completed && (
+                          <div className="bg-blue-600/20 rounded-lg p-2 mb-3">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-blue-200">
+                                Прогрес сьогодні:
+                              </span>
+                              <span className="text-blue-300 font-semibold">
+                                {messageCount}/5 бажань
+                              </span>
+                            </div>
+                            <div className="w-full bg-blue-900/30 rounded-full h-2 mt-2">
+                              <div
+                                className="bg-blue-400 h-2 rounded-full transition-all duration-300"
+                                style={{
+                                  width: `${Math.min(
+                                    (messageCount / 5) * 100,
+                                    100
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+
+                      {/* Progress for serial kiss quest */}
+                      {quest.title === "Серійний поцілунок" &&
+                        !quest.is_completed && (
+                          <div className="bg-pink-600/20 rounded-lg p-2 mb-3">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-pink-200">
+                                Прогрес сьогодні:
+                              </span>
+                              <span className="text-pink-300 font-semibold">
+                                {kissCount}/3 поцілунки
+                              </span>
+                            </div>
+                            <div className="w-full bg-pink-900/30 rounded-full h-2 mt-2">
+                              <div
+                                className="bg-pink-400 h-2 rounded-full transition-all duration-300"
+                                style={{
+                                  width: `${Math.min(
+                                    (kissCount / 3) * 100,
+                                    100
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center text-yellow-400">
                           <img
@@ -232,9 +312,27 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                               quest.requires_verification
                             )
                           }
-                          className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                          disabled={
+                            (quest.title === "Серійне бажання" &&
+                              messageCount < 5) ||
+                            (quest.title === "Серійний поцілунок" &&
+                              kissCount < 3)
+                          }
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform ${
+                            (quest.title === "Серійне бажання" &&
+                              messageCount < 5) ||
+                            (quest.title === "Серійний поцілунок" &&
+                              kissCount < 3)
+                              ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                              : "bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white hover:scale-105 shadow-lg"
+                          }`}
                         >
-                          {quest.requires_verification
+                          {quest.title === "Серійне бажання" && messageCount < 5
+                            ? `Потрібно ${5 - messageCount} ще`
+                            : quest.title === "Серійний поцілунок" &&
+                              kissCount < 3
+                            ? `Потрібно ${3 - kissCount} ще`
+                            : quest.requires_verification
                             ? quest.quest_type === "kiss"
                               ? "Надіслати поцілунок 💋"
                               : quest.quest_type === "message"

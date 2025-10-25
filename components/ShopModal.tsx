@@ -37,7 +37,7 @@ export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
         const data = await response.json();
         setItems(data.items || []);
 
-        // Auto-complete "First quest" when shop is opened
+        // Auto-complete "First quest" when shop is opened (this is just visiting shop)
         try {
           const questResponse = await fetch("/api/quests/auto-complete", {
             method: "POST",

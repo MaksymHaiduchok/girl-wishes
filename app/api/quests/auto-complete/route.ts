@@ -5,6 +5,8 @@ export async function POST(request: NextRequest) {
   try {
     const { questId, questType } = await request.json();
 
+    console.log(`🎯 Auto-complete quest attempt: ${questId} (${questType})`);
+
     if (!questId || !questType) {
       return NextResponse.json(
         { error: "Quest ID and type are required" },
@@ -24,6 +26,27 @@ export async function POST(request: NextRequest) {
     if (questError || !quest) {
       return NextResponse.json({ error: "Quest not found" }, { status: 404 });
     }
+
+    // Verify quest type matches
+    if (quest.quest_type !== questType) {
+      return NextResponse.json(
+        { error: "Quest type mismatch" },
+        { status: 400 }
+      );
+    }
+
+    // Check if quest requires verification (should not auto-complete)
+    if (quest.requires_verification) {
+      console.log(
+        `❌ Quest "${quest.title}" requires manual verification - cannot auto-complete`
+      );
+      return NextResponse.json(
+        { error: "Quest requires manual verification" },
+        { status: 400 }
+      );
+    }
+
+    console.log(`✅ Quest "${quest.title}" can be auto-completed`);
 
     // Check if quest is already completed
     const { data: existingUserQuest, error: existingError } =
