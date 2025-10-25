@@ -18,12 +18,13 @@ export async function GET(request: NextRequest) {
       today.getDate() + 1
     );
 
-    // Count messages sent today
+    // Count messages sent today (excluding kisses)
     const { data: messages, error } = await supabaseAdmin
       .from("messages")
-      .select("id, created_at")
+      .select("id, created_at, message")
       .gte("created_at", startOfDay.toISOString())
       .lt("created_at", endOfDay.toISOString())
+      .neq("message", "💋 Машуля вам надіслала цьом! 💖") // Exclude kisses
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -31,6 +32,11 @@ export async function GET(request: NextRequest) {
     }
 
     const messageCount = messages?.length || 0;
+
+    console.log(
+      `📊 Message count for today: ${messageCount} (excluding kisses)`
+    );
+    console.log(`📊 Messages found:`, messages?.map((m) => m.message) || []);
 
     return NextResponse.json({
       success: true,

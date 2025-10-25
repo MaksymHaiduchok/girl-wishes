@@ -132,24 +132,27 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         if (data.nextReset) {
           setNextReset(data.nextReset);
         } else {
+          // Використовуємо UTC час для консистентності
           const now = new Date();
           const nextMidnight = new Date(now);
-          nextMidnight.setDate(nextMidnight.getDate() + 1);
-          nextMidnight.setHours(0, 0, 0, 0);
+          nextMidnight.setUTCDate(nextMidnight.getUTCDate() + 1);
+          nextMidnight.setUTCHours(0, 0, 0, 0);
           setNextReset(nextMidnight.toISOString());
         }
       } else {
+        // Використовуємо UTC час для консистентності
         const now = new Date();
         const nextMidnight = new Date(now);
-        nextMidnight.setDate(nextMidnight.getDate() + 1);
-        nextMidnight.setHours(0, 0, 0, 0);
+        nextMidnight.setUTCDate(nextMidnight.getUTCDate() + 1);
+        nextMidnight.setUTCHours(0, 0, 0, 0);
         setNextReset(nextMidnight.toISOString());
       }
     } catch (error) {
+      // Використовуємо UTC час для консистентності
       const now = new Date();
       const nextMidnight = new Date(now);
-      nextMidnight.setDate(nextMidnight.getDate() + 1);
-      nextMidnight.setHours(0, 0, 0, 0);
+      nextMidnight.setUTCDate(nextMidnight.getUTCDate() + 1);
+      nextMidnight.setUTCHours(0, 0, 0, 0);
       setNextReset(nextMidnight.toISOString());
     }
   };
@@ -258,7 +261,7 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                 </span>
                 <span className="text-blue-300 font-semibold">
                   {(() => {
-                    const now = currentTime; // Використовуємо currentTime замість new Date()
+                    const now = currentTime;
                     const resetTime = new Date(nextReset);
                     const diff = resetTime.getTime() - now.getTime();
 
@@ -279,6 +282,9 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                       .padStart(2, "0")}`;
                   })()}
                 </span>
+                <div className="text-blue-200 text-xs mt-1">
+                  (о 00:00 за твоїм часом)
+                </div>
               </div>
             </div>
           )}
