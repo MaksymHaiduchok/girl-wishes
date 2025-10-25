@@ -15,21 +15,20 @@ interface ShopItem {
 interface ShopModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userId?: string;
 }
 
-export default function ShopModal({ isOpen, onClose, userId }: ShopModalProps) {
+export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
   const [items, setItems] = useState<ShopItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [sandikCoins, setSandikCoins] = useState(0);
   const [purchasing, setPurchasing] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen && userId) {
+    if (isOpen) {
       fetchItems();
       fetchSandikCoins();
     }
-  }, [isOpen, userId]);
+  }, [isOpen]);
 
   const fetchItems = async () => {
     try {
@@ -47,7 +46,7 @@ export default function ShopModal({ isOpen, onClose, userId }: ShopModalProps) {
 
   const fetchSandikCoins = async () => {
     try {
-      const response = await fetch(`/api/sandik?userId=${userId}`);
+      const response = await fetch(`/api/sandik`);
       if (response.ok) {
         const data = await response.json();
         setSandikCoins(data.amount || 0);
@@ -65,7 +64,7 @@ export default function ShopModal({ isOpen, onClose, userId }: ShopModalProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ itemId, userId }),
+        body: JSON.stringify({ itemId }),
       });
 
       if (response.ok) {

@@ -3,14 +3,17 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
-    const { itemId, userId } = await request.json();
+    const { itemId } = await request.json();
 
-    if (!itemId || !userId) {
+    if (!itemId) {
       return NextResponse.json(
-        { error: "Item ID and User ID are required" },
+        { error: "Item ID is required" },
         { status: 400 }
       );
     }
+
+    // Fixed user ID for Maria
+    const userId = "550e8400-e29b-41d4-a716-446655440000";
 
     // Get item details
     const { data: item, error: itemError } = await supabaseAdmin

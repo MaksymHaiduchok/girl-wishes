@@ -3,14 +3,17 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
-    const { questId, userId } = await request.json();
+    const { questId } = await request.json();
 
-    if (!questId || !userId) {
+    if (!questId) {
       return NextResponse.json(
-        { error: "Quest ID and User ID are required" },
+        { error: "Quest ID is required" },
         { status: 400 }
       );
     }
+
+    // Fixed user ID for Maria
+    const userId = "550e8400-e29b-41d4-a716-446655440000";
 
     // Get quest details
     const { data: quest, error: questError } = await supabaseAdmin

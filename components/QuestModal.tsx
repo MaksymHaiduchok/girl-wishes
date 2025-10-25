@@ -16,28 +16,23 @@ interface Quest {
 interface QuestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userId?: string;
 }
 
-export default function QuestModal({
-  isOpen,
-  onClose,
-  userId,
-}: QuestModalProps) {
+export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [loading, setLoading] = useState(true);
   const [sandikCoins, setSandikCoins] = useState(0);
 
   useEffect(() => {
-    if (isOpen && userId) {
+    if (isOpen) {
       fetchQuests();
       fetchSandikCoins();
     }
-  }, [isOpen, userId]);
+  }, [isOpen]);
 
   const fetchQuests = async () => {
     try {
-      const response = await fetch(`/api/quests?userId=${userId}`);
+      const response = await fetch(`/api/quests`);
       if (response.ok) {
         const data = await response.json();
         setQuests(data.quests || []);
@@ -51,7 +46,7 @@ export default function QuestModal({
 
   const fetchSandikCoins = async () => {
     try {
-      const response = await fetch(`/api/sandik?userId=${userId}`);
+      const response = await fetch(`/api/sandik`);
       if (response.ok) {
         const data = await response.json();
         setSandikCoins(data.amount || 0);
@@ -68,7 +63,7 @@ export default function QuestModal({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ questId, userId }),
+        body: JSON.stringify({ questId }),
       });
 
       if (response.ok) {

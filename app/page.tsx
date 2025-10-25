@@ -15,7 +15,6 @@ export default function Home() {
   const [showFlowerModal, setShowFlowerModal] = useState(false);
   const [showQuestModal, setShowQuestModal] = useState(false);
   const [showShopModal, setShowShopModal] = useState(false);
-  const [userId] = useState("maria-user-001"); // Fixed user ID for Maria
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,14 +209,12 @@ export default function Home() {
       <QuestModal
         isOpen={showQuestModal}
         onClose={() => setShowQuestModal(false)}
-        userId={userId}
       />
 
       {/* Shop Modal */}
       <ShopModal
         isOpen={showShopModal}
         onClose={() => setShowShopModal(false)}
-        userId={userId}
       />
     </div>
   );

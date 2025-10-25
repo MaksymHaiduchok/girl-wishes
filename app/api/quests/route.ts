@@ -3,15 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
-      );
-    }
+    // Fixed user ID for Maria
+    const userId = "550e8400-e29b-41d4-a716-446655440000";
 
     // Get all active quests
     const { data: quests, error: questsError } = await supabaseAdmin
