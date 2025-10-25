@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Flower } from "lucide-react";
+import { Heart, Flower, Gift, ShoppingBag } from "lucide-react";
 import LoveModal from "@/components/LoveModal";
 import FlowerModal from "@/components/FlowerModal";
+import QuestModal from "@/components/QuestModal";
+import ShopModal from "@/components/ShopModal";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -11,6 +13,9 @@ export default function Home() {
   const [showLoveModal, setShowLoveModal] = useState(false);
   const [modalType, setModalType] = useState<"wish" | "kiss">("wish");
   const [showFlowerModal, setShowFlowerModal] = useState(false);
+  const [showQuestModal, setShowQuestModal] = useState(false);
+  const [showShopModal, setShowShopModal] = useState(false);
+  const [userId] = useState("maria-user-001"); // Fixed user ID for Maria
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,6 +141,23 @@ export default function Home() {
 
       {/* Кнопки в правому нижньому куті */}
       <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-3">
+        {/* Кнопка квестів */}
+        <button
+          onClick={() => setShowQuestModal(true)}
+          className="bg-gradient-to-r from-yellow-600 to-orange-800 hover:from-yellow-700 hover:to-orange-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-yellow-500/30 backdrop-blur-sm"
+        >
+          <Gift className="w-5 h-5" />
+          <span>Квести</span>
+        </button>
+
+        {/* Кнопка магазину */}
+        <button
+          onClick={() => setShowShopModal(true)}
+          className="bg-gradient-to-r from-purple-600 to-pink-800 hover:from-purple-700 hover:to-pink-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-purple-500/30 backdrop-blur-sm"
+        >
+          <ShoppingBag className="w-5 h-5" />
+          <span>Sandy Shop</span>
+        </button>
         {/* Кнопка цьомчика */}
         <button
           onClick={async () => {
@@ -182,6 +204,20 @@ export default function Home() {
       <FlowerModal
         isOpen={showFlowerModal}
         onClose={() => setShowFlowerModal(false)}
+      />
+
+      {/* Quest Modal */}
+      <QuestModal
+        isOpen={showQuestModal}
+        onClose={() => setShowQuestModal(false)}
+        userId={userId}
+      />
+
+      {/* Shop Modal */}
+      <ShopModal
+        isOpen={showShopModal}
+        onClose={() => setShowShopModal(false)}
+        userId={userId}
       />
     </div>
   );
