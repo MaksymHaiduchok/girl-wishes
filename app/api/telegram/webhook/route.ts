@@ -1,100 +1,89 @@
 import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
-    const update = await request.json();
+    const body = await request.json();
+
+    // Handle webhook data
 
     // Handle callback queries (button presses)
-    if (update.callback_query) {
-      const { data, message } = update.callback_query;
-      const chatId = message.chat.id;
+    if (body.callback_query) {
+      const callbackData = body.callback_query.data;
+      const chatId = body.callback_query.message.chat.id;
+      const messageId = body.callback_query.message.message_id;
 
-      console.log("Received callback:", data);
+      // Parse callback data: "verify_quest_questId" or "reject_quest_questId"
+      if (callbackData.startsWith("verify_quest_")) {
+        const questId = callbackData.replace("verify_quest_", "");
+        const userId = "550e8400-e29b-41d4-a716-446655440000"; // Maria's ID
 
-      if (data.startsWith("verify_quest_")) {
-        const questId = data.replace("verify_quest_", "");
+        // Get quest details
+        const { data: quest, error: questError } = await supabaseAdmin
+          .from("quests")
+          .select("*")
+          .eq("id", questId)
+          .single();
 
-        // Call our verify API
-        const response = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
-          }/api/quests/verify`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              questId: questId,
-              action: "verify",
-            }),
-          }
-        );
+        if (questError || !quest) {
+          await sendTelegramMessage(chatId, "❌ Помилка: квест не знайдено");
+          return NextResponse.json({ success: true });
+        }
 
-        if (response.ok) {
-          // Answer the callback query
-          await fetch(
-            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/answerCallbackQuery`,
+        // Mark quest as completed
+        const { error: completeError } = await supabaseAdmin
+          .from("user_quests")
+          .upsert({
+            user_id: userId,
+            quest_id: questId,
+            is_completed: true,
+            completed_at: new Date().toISOString(),
+          });
+
+        if (completeError) {
+          await sendTelegramMessage(
+            chatId,
+            "❌ Помилка бази даних при виконанні квесту"
+          );
+          return NextResponse.json({ success: true });
+        }
+
+        // Add Sandik coins to user
+        const { error: coinsError } = await supabaseAdmin
+          .from("sandik_coins")
+          .upsert(
             {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                callback_query_id: update.callback_query.id,
-                text: "✅ Квест підтверджено!",
-              }),
+              user_id: userId,
+              amount: quest.sandik_reward,
+            },
+            {
+              onConflict: "user_id",
+              ignoreDuplicates: false,
             }
           );
-        }
-      } else if (data.startsWith("reject_quest_")) {
-        const questId = data.replace("reject_quest_", "");
 
-        // Call our verify API with reject action
-        const response = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
-          }/api/quests/verify`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              questId: questId,
-              action: "reject",
-            }),
-          }
-        );
-
-        if (response.ok) {
-          // Answer the callback query
-          await fetch(
-            `https://api.telegram.org/bot${process.env.BOT_TOKEN}/answerCallbackQuery`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                callback_query_id: update.callback_query.id,
-                text: "❌ Квест не підтверджено",
-              }),
-            }
+        if (coinsError) {
+          await sendTelegramMessage(
+            chatId,
+            "❌ Помилка додавання Sandik монеток"
           );
+          return NextResponse.json({ success: true });
         }
+
+        // Send confirmation
+        await sendTelegramMessage(
+          chatId,
+          `✅ Квест "${quest.title}" підтверджено!\n\n💰 Маша отримала ${quest.sandik_reward} Sandik монеток!`
+        );
+      } else if (callbackData.startsWith("reject_quest_")) {
+        await sendTelegramMessage(
+          chatId,
+          "❌ Квест не підтверджено. Маша може спробувати ще раз."
+        );
       }
 
-      return NextResponse.json({ success: true });
-    }
-
-    // Handle regular messages
-    if (update.message) {
-      const { text, chat } = update.message;
-
-      // You can add logic here to handle messages from Maria
-      // For now, just acknowledge receipt
-      return NextResponse.json({ success: true });
+      // Answer the callback query to remove loading state
+      await answerCallbackQuery(body.callback_query.id);
     }
 
     return NextResponse.json({ success: true });
@@ -104,5 +93,56 @@ export async function POST(request: NextRequest) {
       { error: "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+async function sendTelegramMessage(chatId: string, text: string) {
+  if (!process.env.BOT_TOKEN) return;
+
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      // Silent error handling
+    }
+  } catch (error) {
+    // Silent error handling
+  }
+}
+
+async function answerCallbackQuery(callbackQueryId: string) {
+  if (!process.env.BOT_TOKEN) return;
+
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/answerCallbackQuery`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          callback_query_id: callbackQueryId,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      // Silent error handling
+    }
+  } catch (error) {
+    // Silent error handling
   }
 }
