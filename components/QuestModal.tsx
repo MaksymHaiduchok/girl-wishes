@@ -11,6 +11,7 @@ interface Quest {
   sandik_reward: number;
   is_completed: boolean;
   completed_at?: string;
+  requires_verification: boolean;
 }
 
 interface QuestModalProps {
