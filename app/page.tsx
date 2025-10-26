@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Flower, Gift, ShoppingBag, Trophy, Brain } from "lucide-react";
+import { Trophy } from "lucide-react";
 import LoveModal from "@/components/LoveModal";
 import FlowerModal from "@/components/FlowerModal";
 import QuestModal from "@/components/QuestModal";
@@ -148,77 +148,87 @@ export default function Home() {
       </div>
 
       {/* Кнопки в правому нижньому куті */}
-      <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-3">
-        {/* Кнопка квестів */}
-        <button
-          onClick={() => setShowQuestModal(true)}
-          className="bg-gradient-to-r from-yellow-600 to-orange-800 hover:from-yellow-700 hover:to-orange-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-yellow-500/30 backdrop-blur-sm"
-        >
-          <Gift className="w-5 h-5" />
-          <span>Квести</span>
-        </button>
+      <div className="fixed bottom-6 right-6 z-30 flex flex-col sm:flex-col gap-3 sm:gap-3 max-h-[80vh] overflow-y-auto">
+        {/* Перший ряд кнопок */}
+        <div className="flex flex-row sm:flex-col gap-3 sm:gap-3">
+          {/* Кнопка квестів */}
+          <button
+            onClick={() => setShowQuestModal(true)}
+            className="bg-gradient-to-r from-yellow-600 to-orange-800 hover:from-yellow-700 hover:to-orange-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-yellow-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+          >
+            <span className="text-lg sm:text-base">🎁</span>
+            <span className="hidden sm:inline">Квести</span>
+          </button>
 
-        {/* Кнопка магазину */}
-        <button
-          onClick={() => setShowShopModal(true)}
-          className="bg-gradient-to-r from-purple-600 to-pink-800 hover:from-purple-700 hover:to-pink-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-purple-500/30 backdrop-blur-sm"
-        >
-          <ShoppingBag className="w-5 h-5" />
-          <span>Sandy Shop</span>
-        </button>
+          {/* Кнопка магазину */}
+          <button
+            onClick={() => setShowShopModal(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-800 hover:from-purple-700 hover:to-pink-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-purple-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+          >
+            <span className="text-lg sm:text-base">🛍️</span>
+            <span className="hidden sm:inline">Sandy Shop</span>
+          </button>
+        </div>
 
-        {/* Кнопка казино */}
-        <button
-          onClick={() => setShowCasinoModal(true)}
-          className="bg-gradient-to-r from-yellow-600 to-red-800 hover:from-yellow-700 hover:to-red-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-yellow-500/30 backdrop-blur-sm"
-        >
-          <span>🎰 Казино</span>
-        </button>
+        {/* Другий ряд кнопок */}
+        <div className="flex flex-row sm:flex-col gap-3 sm:gap-3">
+          {/* Кнопка казино */}
+          <button
+            onClick={() => setShowCasinoModal(true)}
+            className="bg-gradient-to-r from-yellow-600 to-red-800 hover:from-yellow-700 hover:to-red-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-yellow-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+          >
+            <span className="text-lg sm:text-base">🎰</span>
+            <span className="hidden sm:inline">Казино</span>
+          </button>
 
-        {/* Кнопка вікторини */}
-        <button
-          onClick={() => setShowQuizModal(true)}
-          className="bg-gradient-to-r from-purple-600 to-blue-800 hover:from-purple-700 hover:to-blue-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-purple-500/30 backdrop-blur-sm"
-        >
-          <Brain className="w-5 h-5" />
-          <span> Вікторина</span>
-        </button>
-        {/* Кнопка цьомчика */}
-        <button
-          onClick={async () => {
-            try {
-              const response = await fetch("/api/sendKiss", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
+          {/* Кнопка вікторини */}
+          <button
+            onClick={() => setShowQuizModal(true)}
+            className="bg-gradient-to-r from-purple-600 to-blue-800 hover:from-purple-700 hover:to-blue-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-purple-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+          >
+            <span className="text-lg sm:text-base">🧠</span>
+            <span className="hidden sm:inline">Вікторина</span>
+          </button>
+        </div>
+        {/* Третій ряд кнопок */}
+        <div className="flex flex-row sm:flex-col gap-3 sm:gap-3">
+          {/* Кнопка цьомчика */}
+          <button
+            onClick={async () => {
+              try {
+                const response = await fetch("/api/sendKiss", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                });
 
-              if (response.ok) {
-                setModalType("kiss");
-                setShowLoveModal(true);
-                setTimeout(() => {
-                  triggerRefresh();
-                }, 1000);
+                if (response.ok) {
+                  setModalType("kiss");
+                  setShowLoveModal(true);
+                  setTimeout(() => {
+                    triggerRefresh();
+                  }, 1000);
+                }
+              } catch (error) {
+                console.error("Error sending kiss:", error);
               }
-            } catch (error) {
-              console.error("Error sending kiss:", error);
-            }
-          }}
-          className="bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-red-500/30 backdrop-blur-sm"
-        >
-          <Heart className="w-5 h-5" />
-          <span>Відправити Максиму цьомчик</span>
-        </button>
+            }}
+            className="bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-red-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+          >
+            <span className="text-lg sm:text-base">💋</span>
+            <span className="hidden sm:inline">Відправити Максиму цьомчик</span>
+          </button>
 
-        {/* Кнопка букетика */}
-        <button
-          onClick={() => setShowFlowerModal(true)}
-          className="bg-gradient-to-r from-pink-600 to-purple-800 hover:from-pink-700 hover:to-purple-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-pink-500/30 backdrop-blur-sm"
-        >
-          <Flower className="w-5 h-5" />
-          <span>Отримати букетик</span>
-        </button>
+          {/* Кнопка букетика */}
+          <button
+            onClick={() => setShowFlowerModal(true)}
+            className="bg-gradient-to-r from-pink-600 to-purple-800 hover:from-pink-700 hover:to-purple-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-pink-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+          >
+            <span className="text-lg sm:text-base">🌸</span>
+            <span className="hidden sm:inline">Отримати букетик</span>
+          </button>
+        </div>
       </div>
 
       {/* Love Modal */}
