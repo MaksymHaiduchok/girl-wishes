@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Flower, Gift, ShoppingBag } from "lucide-react";
+import { Heart, Flower, Gift, ShoppingBag, Trophy } from "lucide-react";
 import LoveModal from "@/components/LoveModal";
 import FlowerModal from "@/components/FlowerModal";
 import QuestModal from "@/components/QuestModal";
 import ShopModal from "@/components/ShopModal";
+import CasinoModal from "@/components/CasinoModal";
 import { useQuest } from "@/contexts/QuestContext";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
   const [showFlowerModal, setShowFlowerModal] = useState(false);
   const [showQuestModal, setShowQuestModal] = useState(false);
   const [showShopModal, setShowShopModal] = useState(false);
+  const [showCasinoModal, setShowCasinoModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,6 +164,14 @@ export default function Home() {
           <ShoppingBag className="w-5 h-5" />
           <span>Sandy Shop</span>
         </button>
+
+        {/* Кнопка казино */}
+        <button
+          onClick={() => setShowCasinoModal(true)}
+          className="bg-gradient-to-r from-yellow-600 to-red-800 hover:from-yellow-700 hover:to-red-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-yellow-500/30 backdrop-blur-sm"
+        >
+          <span>🎰 Казино</span>
+        </button>
         {/* Кнопка цьомчика */}
         <button
           onClick={async () => {
@@ -223,6 +233,12 @@ export default function Home() {
       <ShopModal
         isOpen={showShopModal}
         onClose={() => setShowShopModal(false)}
+      />
+
+      {/* Casino Modal */}
+      <CasinoModal
+        isOpen={showCasinoModal}
+        onClose={() => setShowCasinoModal(false)}
       />
     </div>
   );
