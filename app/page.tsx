@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Flower, Gift, ShoppingBag, Trophy } from "lucide-react";
+import { Heart, Flower, Gift, ShoppingBag, Trophy, Brain } from "lucide-react";
 import LoveModal from "@/components/LoveModal";
 import FlowerModal from "@/components/FlowerModal";
 import QuestModal from "@/components/QuestModal";
 import ShopModal from "@/components/ShopModal";
 import CasinoModal from "@/components/CasinoModal";
+import QuizModal from "@/components/QuizModal";
 import { useQuest } from "@/contexts/QuestContext";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
   const [showQuestModal, setShowQuestModal] = useState(false);
   const [showShopModal, setShowShopModal] = useState(false);
   const [showCasinoModal, setShowCasinoModal] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,6 +174,15 @@ export default function Home() {
         >
           <span>🎰 Казино</span>
         </button>
+
+        {/* Кнопка вікторини */}
+        <button
+          onClick={() => setShowQuizModal(true)}
+          className="bg-gradient-to-r from-purple-600 to-blue-800 hover:from-purple-700 hover:to-blue-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-purple-500/30 backdrop-blur-sm"
+        >
+          <Brain className="w-5 h-5" />
+          <span>🧠 Вікторина</span>
+        </button>
         {/* Кнопка цьомчика */}
         <button
           onClick={async () => {
@@ -239,6 +250,12 @@ export default function Home() {
       <CasinoModal
         isOpen={showCasinoModal}
         onClose={() => setShowCasinoModal(false)}
+      />
+
+      {/* Quiz Modal */}
+      <QuizModal
+        isOpen={showQuizModal}
+        onClose={() => setShowQuizModal(false)}
       />
     </div>
   );

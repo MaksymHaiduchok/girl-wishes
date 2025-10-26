@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, Gift, Star, Clock, CheckCircle } from "lucide-react";
 import { useQuest } from "@/contexts/QuestContext";
+import QuizModal from "./QuizModal";
 
 interface Quest {
   id: string;
@@ -34,6 +35,7 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
     new Date().toISOString()
   );
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
 
   // Debounced refresh function
   const debouncedRefresh = useCallback(() => {
@@ -320,7 +322,14 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         });
 
         if (response.ok) {
-          alert(`✅ Квест "${questTitle}" виконано! Отримано Sandik монетки!`);
+          // Special handling for quiz quest
+          if (questType === "quiz") {
+            setShowQuizModal(true);
+          } else {
+            alert(
+              `✅ Квест "${questTitle}" виконано! Отримано Sandik монетки!`
+            );
+          }
           // Trigger debounced refresh
           debouncedRefresh();
         } else {
@@ -618,6 +627,8 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                               ? "Прибратись вдома 🧹"
                               : quest.quest_type === "make_circle_mirror"
                               ? "Зробити кружечко в дзеркалі ⭕"
+                              : quest.quest_type === "quiz"
+                              ? "Відвідати вікторину 🧠"
                               : "Виконати"
                             : "Виконати ✅"}
                         </button>
@@ -637,6 +648,15 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
           </p>
         </div>
       </div>
+
+      {/* Quiz Modal */}
+      <QuizModal
+        isOpen={showQuizModal}
+        onClose={() => {
+          setShowQuizModal(false);
+          debouncedRefresh();
+        }}
+      />
     </div>
   );
 }
