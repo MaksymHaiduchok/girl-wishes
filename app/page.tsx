@@ -181,7 +181,7 @@ export default function Home() {
           className="bg-gradient-to-r from-purple-600 to-blue-800 hover:from-purple-700 hover:to-blue-900 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 border border-purple-500/30 backdrop-blur-sm"
         >
           <Brain className="w-5 h-5" />
-          <span>🧠 Вікторина</span>
+          <span> Вікторина</span>
         </button>
         {/* Кнопка цьомчика */}
         <button
