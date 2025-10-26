@@ -35,6 +35,18 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
   );
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // Debounced refresh function
+  const debouncedRefresh = useCallback(() => {
+    const timeoutId = setTimeout(() => {
+      fetchQuests();
+      fetchSandikCoins();
+      fetchMessageCount();
+      fetchKissCount();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       fetchQuests();
@@ -44,6 +56,13 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
       checkDailyReset();
     }
   }, [isOpen, refreshTrigger]);
+
+  // Auto-refresh when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      debouncedRefresh();
+    }
+  }, [refreshTrigger, debouncedRefresh]);
 
   // Окремий useEffect для таймера
   useEffect(() => {
@@ -302,6 +321,8 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
 
         if (response.ok) {
           alert(`✅ Квест "${questTitle}" виконано! Отримано Sandik монетки!`);
+          // Trigger debounced refresh
+          debouncedRefresh();
         } else {
           const errorData = await response.json();
           alert(
@@ -326,7 +347,7 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
       />
 
       {/* Modal */}
-      <div className="relative bg-gradient-to-br from-yellow-900/90 to-orange-900/90 rounded-2xl p-6 w-[90vw] h-[80vh] max-w-4xl mx-4 border border-yellow-500/30 shadow-2xl flex flex-col">
+      <div className="relative bg-gradient-to-br from-yellow-900/90 to-orange-900/90 rounded-2xl p-4 sm:p-6 w-[95vw] sm:w-[90vw] h-[85vh] sm:h-[80vh] max-w-4xl mx-2 sm:mx-4 border border-yellow-500/30 shadow-2xl flex flex-col">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -336,24 +357,24 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         </button>
 
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center mb-4">
-            <h2 className="text-3xl font-bold text-white neon-text">
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="flex items-center justify-center mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white neon-text">
               Квести для Маші
             </h2>
             {isUpdating && (
-              <div className="ml-3 flex items-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400"></div>
-                <span className="ml-2 text-yellow-300 text-sm">
+              <div className="ml-2 sm:ml-3 flex items-center">
+                <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-yellow-400"></div>
+                <span className="ml-1 sm:ml-2 text-yellow-300 text-xs sm:text-sm">
                   Оновлення...
                 </span>
               </div>
             )}
           </div>
-          <div className="flex items-center justify-center space-x-4 mb-4">
-            <div className="flex items-center bg-yellow-600/20 rounded-lg px-4 py-2">
-              <img src="/sandik.png" alt="Sandik" className="w-5 h-5 mr-2" />
-              <span className="text-yellow-200 font-semibold">
+          <div className="flex items-center justify-center mb-3 sm:mb-4">
+            <div className="flex items-center bg-yellow-600/20 rounded-lg px-3 sm:px-4 py-2">
+              <img src="/sandik.png" alt="Sandik" className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="text-yellow-200 font-semibold text-sm sm:text-base">
                 {sandikCoins} Sandik
               </span>
             </div>
@@ -361,13 +382,15 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
 
           {/* Daily Reset Timer */}
           {nextReset && (
-            <div className="bg-blue-600/20 rounded-lg p-3 mb-4">
-              <div className="flex items-center justify-center space-x-2">
-                <Clock className="w-4 h-4 text-blue-300" />
-                <span className="text-blue-200 text-sm">
-                  Щоденні квести оновляться через:
-                </span>
-                <span className="text-blue-300 font-semibold">
+            <div className="bg-blue-600/20 rounded-lg p-2 sm:p-3 mb-3 sm:mb-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2">
+                <div className="flex items-center space-x-2">
+                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-300" />
+                  <span className="text-blue-200 text-xs sm:text-sm">
+                    Щоденні квести оновляться через:
+                  </span>
+                </div>
+                <span className="text-blue-300 font-semibold text-sm sm:text-base">
                   {(() => {
                     const now = currentTime;
                     const resetTime = new Date(nextReset);
@@ -399,15 +422,15 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+              <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-yellow-400"></div>
             </div>
           ) : quests.length === 0 ? (
             <div className="text-center text-yellow-200">
-              <Gift className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p>Немає доступних квестів</p>
+              <Gift className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 opacity-50" />
+              <p className="text-sm sm:text-base">Немає доступних квестів</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {quests.map((quest) => (
                 <div
                   key={quest.id}
@@ -415,19 +438,19 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                     quest.is_completed
                       ? "from-green-800/50 to-green-900/50 border-green-500/30"
                       : "from-yellow-800/50 to-orange-900/50 border-yellow-500/30"
-                  } rounded-xl p-4 border shadow-lg`}
+                  } rounded-xl p-3 sm:p-4 border shadow-lg`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex-1 mb-3 sm:mb-0">
                       <div className="flex items-center mb-2">
-                        <h3 className="text-lg font-bold text-white mr-3">
+                        <h3 className="text-base sm:text-lg font-bold text-white mr-2 sm:mr-3">
                           {quest.title}
                         </h3>
                         {quest.is_completed && (
-                          <CheckCircle className="w-5 h-5 text-green-400" />
+                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0" />
                         )}
                       </div>
-                      <p className="text-yellow-200 text-sm mb-3">
+                      <p className="text-yellow-200 text-xs sm:text-sm mb-3">
                         {quest.description}
                       </p>
 
@@ -435,7 +458,7 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                       {quest.title === "5 бажань за день" &&
                         !quest.is_completed && (
                           <div className="bg-blue-600/20 rounded-lg p-2 mb-3">
-                            <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center justify-between text-xs sm:text-sm">
                               <span className="text-blue-200">
                                 Прогрес сьогодні:
                               </span>
@@ -443,9 +466,9 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                                 {messageCount}/5 бажань
                               </span>
                             </div>
-                            <div className="w-full bg-blue-900/30 rounded-full h-2 mt-2">
+                            <div className="w-full bg-blue-900/30 rounded-full h-1.5 sm:h-2 mt-2">
                               <div
-                                className="bg-blue-400 h-2 rounded-full transition-all duration-300"
+                                className="bg-blue-400 h-1.5 sm:h-2 rounded-full transition-all duration-300"
                                 style={{
                                   width: `${Math.min(
                                     (messageCount / 5) * 100,
@@ -461,7 +484,7 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                       {quest.title === "3 поцілунки за день" &&
                         !quest.is_completed && (
                           <div className="bg-pink-600/20 rounded-lg p-2 mb-3">
-                            <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center justify-between text-xs sm:text-sm">
                               <span className="text-pink-200">
                                 Прогрес сьогодні:
                               </span>
@@ -469,9 +492,9 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                                 {kissCount}/3 поцілунки
                               </span>
                             </div>
-                            <div className="w-full bg-pink-900/30 rounded-full h-2 mt-2">
+                            <div className="w-full bg-pink-900/30 rounded-full h-1.5 sm:h-2 mt-2">
                               <div
-                                className="bg-pink-400 h-2 rounded-full transition-all duration-300"
+                                className="bg-pink-400 h-1.5 sm:h-2 rounded-full transition-all duration-300"
                                 style={{
                                   width: `${Math.min(
                                     (kissCount / 3) * 100,
@@ -482,20 +505,20 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                             </div>
                           </div>
                         )}
-                      <div className="flex items-center space-x-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                         <div className="flex items-center text-yellow-400">
                           <img
                             src="/sandik.png"
                             alt="Sandik"
-                            className="w-4 h-4 mr-1"
+                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1"
                           />
-                          <span className="text-sm font-semibold">
+                          <span className="text-xs sm:text-sm font-semibold">
                             +{quest.sandik_reward} Sandik
                           </span>
                         </div>
                         <div className="flex items-center text-blue-400">
-                          <Clock className="w-4 h-4 mr-1" />
-                          <span className="text-sm">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                          <span className="text-xs sm:text-sm">
                             {quest.quest_type === "daily"
                               ? "Щоденний"
                               : "Одноразовий"}
@@ -503,9 +526,9 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                         </div>
                       </div>
                     </div>
-                    <div className="ml-4">
+                    <div className="mt-3 sm:mt-0 sm:ml-4">
                       {quest.is_completed ? (
-                        <div className="text-green-400 text-sm">
+                        <div className="text-green-400 text-xs sm:text-sm text-center sm:text-left">
                           Виконано
                           {quest.completed_at && (
                             <div className="text-xs opacity-75">
@@ -531,7 +554,7 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                             (quest.title === "3 поцілунки за день" &&
                               kissCount < 3)
                           }
-                          className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform ${
+                          className={`w-full sm:w-auto px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform text-xs sm:text-sm ${
                             (quest.title === "5 бажань за день" &&
                               messageCount < 5) ||
                             (quest.title === "3 поцілунки за день" &&
@@ -578,8 +601,8 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center">
-          <p className="text-yellow-200 text-sm">
+        <div className="mt-4 sm:mt-6 text-center">
+          <p className="text-yellow-200 text-xs sm:text-sm">
             Виконуй квести та отримуй Sandik монетки! 💰
           </p>
         </div>
