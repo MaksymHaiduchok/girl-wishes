@@ -373,7 +373,11 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
           </div>
           <div className="flex items-center justify-center mb-3 sm:mb-4">
             <div className="flex items-center bg-yellow-600/20 rounded-lg px-3 sm:px-4 py-2">
-              <img src="/sandik.png" alt="Sandik" className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <img
+                src="/sandik.png"
+                alt="Sandik"
+                className="w-4 h-4 sm:w-5 sm:h-5 mr-2"
+              />
               <span className="text-yellow-200 font-semibold text-sm sm:text-base">
                 {sandikCoins} Sandik
               </span>
@@ -588,6 +592,32 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                               ? "Показати лук оф зе дей 👗"
                               : quest.quest_type === "eat_three_times"
                               ? "Поїсти три рази 🍽️"
+                              : quest.quest_type === "exercise"
+                              ? "Зробити зарядку 💪"
+                              : quest.quest_type === "drink_water"
+                              ? "Пити 2 літри води 💧"
+                              : quest.quest_type === "steps"
+                              ? "Зробити 10000 кроків 🚶‍♀️"
+                              : quest.quest_type === "guess_thought"
+                              ? "Вгадати думку 🧠"
+                              : quest.quest_type === "honest_thought"
+                              ? "Написати чесну думку 💭"
+                              : quest.quest_type === "show_mess"
+                              ? "Показати безпорядок 🏠"
+                              : quest.quest_type === "random_tiktok"
+                              ? "Надіслати чернетку TikTok 📱"
+                              : quest.quest_type === "random_photo"
+                              ? "Надіслати рандомне фото 📸"
+                              : quest.quest_type === "tell_secret"
+                              ? "Розказати секрет 🤫"
+                              : quest.quest_type === "learn_new_skill"
+                              ? "Навчитись чогось нового 🎓"
+                              : quest.quest_type === "complain_work"
+                              ? "Пожалітись на роботу 💼"
+                              : quest.quest_type === "clean_home"
+                              ? "Прибратись вдома 🧹"
+                              : quest.quest_type === "make_circle_mirror"
+                              ? "Зробити кружечко в дзеркалі ⭕"
                               : "Виконати"
                             : "Виконати ✅"}
                         </button>
