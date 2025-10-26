@@ -93,6 +93,25 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
     }
   }, [isOpen, lastUpdateCheck]);
 
+  // useEffect для автоматичного скидання щоденних квестів
+  useEffect(() => {
+    if (isOpen && nextReset) {
+      const timer = setInterval(() => {
+        const now = new Date();
+        const resetTime = new Date(nextReset);
+        const diff = resetTime.getTime() - now.getTime();
+
+        // Якщо час скидання настав (або минув)
+        if (diff <= 0) {
+          console.log("🔄 Daily quest reset time reached! Resetting quests...");
+          resetDailyQuests();
+        }
+      }, 1000); // Перевіряємо кожну секунду
+
+      return () => clearInterval(timer);
+    }
+  }, [isOpen, nextReset]);
+
   const fetchQuests = async () => {
     try {
       const response = await fetch(`/api/quests`);
@@ -194,6 +213,45 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
       nextMidnight.setDate(nextMidnight.getDate() + 1);
       nextMidnight.setHours(0, 0, 0, 0);
       setNextReset(nextMidnight.toISOString());
+    }
+  };
+
+  const resetDailyQuests = async () => {
+    try {
+      console.log("🔄 Resetting daily quests...");
+      const response = await fetch(`/api/quests/reset-daily`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("⏰ Daily reset result:", data);
+
+        if (data.reset) {
+          // Оновлюємо всі дані після скидання
+          await fetchQuests();
+          await fetchSandikCoins();
+          await fetchMessageCount();
+          await fetchKissCount();
+          console.log("✅ Daily quests reset successfully!");
+        }
+
+        if (data.nextReset) {
+          setNextReset(data.nextReset);
+        } else {
+          // Розраховуємо наступну північ в локальній часовій зоні
+          const now = new Date();
+          const nextMidnight = new Date(now);
+          nextMidnight.setDate(nextMidnight.getDate() + 1);
+          nextMidnight.setHours(0, 0, 0, 0);
+          setNextReset(nextMidnight.toISOString());
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error resetting daily quests:", error);
     }
   };
 
