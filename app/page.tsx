@@ -99,7 +99,7 @@ export default function Home() {
           <button
             type="submit"
             disabled={isLoading || !message.trim()}
-            className="w-full bg-gradient-to-r from-red-600 to-red-800 text-white py-3 px-6 rounded-xl font-semibold hover:from-red-700 hover:to-red-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 shadow-lg shadow-red-500/25 border border-red-500/30 button-glow"
+            className="w-full bg-gradient-to-r from-red-600 to-red-800 text-white py-3 px-6 rounded-xl font-semibold hover:from-red-700 hover:to-red-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-red-500/25 border border-red-500/30 button-glow"
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
@@ -148,13 +148,13 @@ export default function Home() {
       </div>
 
       {/* Кнопки в правому нижньому куті */}
-      <div className="fixed bottom-6 right-6 z-30 flex flex-col sm:flex-col gap-3 sm:gap-3 max-h-[80vh] overflow-y-auto">
+      <div className="fixed bottom-6 right-6 z-30 flex flex-col sm:flex-col gap-3 sm:gap-3 max-h-[80vh] overflow-y-auto overflow-x-hidden">
         {/* Перший ряд кнопок */}
         <div className="flex flex-row sm:flex-col gap-3 sm:gap-3">
           {/* Кнопка квестів */}
           <button
             onClick={() => setShowQuestModal(true)}
-            className="bg-gradient-to-r from-yellow-600 to-orange-800 hover:from-yellow-700 hover:to-orange-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-yellow-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+            className="bg-gradient-to-r from-yellow-600 to-orange-800 hover:from-yellow-700 hover:to-orange-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transition-all duration-200 flex items-center justify-center space-x-2 border border-yellow-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
           >
             <span className="text-lg sm:text-base">🎁</span>
             <span className="hidden sm:inline">Квести</span>
@@ -163,7 +163,7 @@ export default function Home() {
           {/* Кнопка магазину */}
           <button
             onClick={() => setShowShopModal(true)}
-            className="bg-gradient-to-r from-purple-600 to-pink-800 hover:from-purple-700 hover:to-pink-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-purple-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+            className="bg-gradient-to-r from-purple-600 to-pink-800 hover:from-purple-700 hover:to-pink-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-200 flex items-center justify-center space-x-2 border border-purple-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
           >
             <span className="text-lg sm:text-base">🛍️</span>
             <span className="hidden sm:inline">Sandy Shop</span>
@@ -175,7 +175,7 @@ export default function Home() {
           {/* Кнопка казино */}
           <button
             onClick={() => setShowCasinoModal(true)}
-            className="bg-gradient-to-r from-yellow-600 to-red-800 hover:from-yellow-700 hover:to-red-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-yellow-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+            className="bg-gradient-to-r from-yellow-600 to-red-800 hover:from-yellow-700 hover:to-red-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transition-all duration-200 flex items-center justify-center space-x-2 border border-yellow-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
           >
             <span className="text-lg sm:text-base">🎰</span>
             <span className="hidden sm:inline">Казино</span>
@@ -184,7 +184,7 @@ export default function Home() {
           {/* Кнопка вікторини */}
           <button
             onClick={() => setShowQuizModal(true)}
-            className="bg-gradient-to-r from-purple-600 to-blue-800 hover:from-purple-700 hover:to-blue-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-purple-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+            className="bg-gradient-to-r from-purple-600 to-blue-800 hover:from-purple-700 hover:to-blue-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-200 flex items-center justify-center space-x-2 border border-purple-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
           >
             <span className="text-lg sm:text-base">🧠</span>
             <span className="hidden sm:inline">Вікторина</span>
@@ -214,7 +214,7 @@ export default function Home() {
                 console.error("Error sending kiss:", error);
               }
             }}
-            className="bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-red-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+            className="bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 flex items-center justify-center space-x-2 border border-red-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
           >
             <span className="text-lg sm:text-base">💋</span>
             <span className="hidden sm:inline">Відправити Максиму цьомчик</span>
@@ -223,7 +223,7 @@ export default function Home() {
           {/* Кнопка букетика */}
           <button
             onClick={() => setShowFlowerModal(true)}
-            className="bg-gradient-to-r from-pink-600 to-purple-800 hover:from-pink-700 hover:to-purple-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/40 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 border border-pink-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
+            className="bg-gradient-to-r from-pink-600 to-purple-800 hover:from-pink-700 hover:to-purple-900 text-white px-4 py-3 sm:px-6 sm:py-3 rounded-xl font-semibold shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-200 flex items-center justify-center space-x-2 border border-pink-500/30 backdrop-blur-sm text-sm sm:text-base w-12 h-12 sm:w-auto sm:h-auto"
           >
             <span className="text-lg sm:text-base">🌸</span>
             <span className="hidden sm:inline">Отримати букетик</span>

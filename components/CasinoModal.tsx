@@ -302,7 +302,7 @@ export default function CasinoModal({ isOpen, onClose }: CasinoModalProps) {
               className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
                 isSpinning || balance < betAmount
                   ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-yellow-500 to-orange-500 text-black hover:from-yellow-400 hover:to-orange-400 transform hover:scale-105"
+                  : "bg-gradient-to-r from-yellow-500 to-orange-500 text-black hover:from-yellow-400 hover:to-orange-400"
               }`}
             >
               {isSpinning ? "🎰 Крутиться..." : "🎰 КРУТИТИ!"}

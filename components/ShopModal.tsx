@@ -239,9 +239,9 @@ export default function ShopModal({ isOpen, onClose }: ShopModalProps) {
                         disabled={
                           sandikCoins < item.price || purchasing === item.id
                         }
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform ${
+                        className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
                           sandikCoins >= item.price && purchasing !== item.id
-                            ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-105 shadow-lg"
+                            ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
                             : "bg-gray-600 text-gray-400 cursor-not-allowed"
                         }`}
                       >

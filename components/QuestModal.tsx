@@ -567,13 +567,13 @@ export default function QuestModal({ isOpen, onClose }: QuestModalProps) {
                             (quest.title === "3 поцілунки за день" &&
                               kissCount < 3)
                           }
-                          className={`w-full sm:w-auto px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform text-xs sm:text-sm ${
+                          className={`w-full sm:w-auto px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-xs sm:text-sm ${
                             (quest.title === "5 бажань за день" &&
                               messageCount < 5) ||
                             (quest.title === "3 поцілунки за день" &&
                               kissCount < 3)
                               ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                              : "bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white hover:scale-105 shadow-lg"
+                              : "bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white shadow-lg"
                           }`}
                         >
                           {quest.title === "5 бажань за день" &&
